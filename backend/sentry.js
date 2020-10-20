@@ -1,22 +1,3 @@
-var express = require('express');
-var cors = require('cors')
-var app = express();
-
-
-
-// SERVER
-app.use(cors());
-
-app.listen(3030, () => {
- console.log("Server running on port http://localhost:3030");
-});
-
-app.get("/url", (req, res, next) => {
-    res.json(["Red","Lime","Magenta","Green","Fuchsia"]);
-   });
-
-
-// Sentry
 const Sentry = require("@sentry/node");
 // or use es6 import statements
 // import * as Sentry from '@sentry/node';
