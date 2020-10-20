@@ -1,7 +1,11 @@
 var express = require("express");
+var cors = require('cors')
 var app = express();
-app.listen(3000, () => {
- console.log("Server running on port http://localhost:3000");
+
+app.use(cors());
+
+app.listen(3030, () => {
+ console.log("Server running on port http://localhost:3030");
 });
 
 app.get("/url", (req, res, next) => {
