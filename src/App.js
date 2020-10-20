@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './App.css';
+import { request } from './fakeRequest'
 
 const App = () => {
   const [ newData, setData ] = useState('no data');
 
   const fetcher = () => {
-  fetch("http://localhost:3030/url")
+  fetch(request)
     .then((response) => {
       if (response.status !== 200) {
         console.log('Looks like there was a problem. Status Code: ' + response.status);
