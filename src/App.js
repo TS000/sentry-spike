@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
-import { debugURL } from "./fakeRequest";
 import * as Sentry from "@sentry/react";
+import { v4 as uuidv4 } from "uuid";
 
 const FallbackComponent = () => {
   return <div>An error has occured, panic.</div>;
@@ -11,22 +11,37 @@ const App = () => {
   const [newData, setData] = useState("no data");
 
   const fetcher = () => {
-    fetch(debugURL)
+    let newID = uuidv4();
+    let newHeaders = new Headers();
+    newHeaders.append("reqID", newID);
+
+    const newInit = {
+      method: "GET",
+      headers: newHeaders,
+      mode: "cors",
+      cache: "default",
+    };
+
+    const debugURL = "http://localhost:3030/url";
+
+    const request = new Request(debugURL, newInit);
+    fetch(request)
       .then((response) => {
         if (response.status !== 200) {
-          console.log(
-            "Looks like there was a problem. Status Code: " + response.status
-          );
-          Sentry.captureException(response.status);
-          return;
-        }
-        response.json().then(function (data) {
+          throw TypeError(`Front End Error ID: ${newID}`);
+        } else {
+        response.text().then((data) => {
           console.log(data);
           setData(data);
         });
+      }
       })
-      .catch(function (err) {
-        console.log("Fetch Error :-S", err);
+      .catch((err) => {
+        // group errors together based on their request and response
+        Sentry.withScope((scope) => {
+          scope.setTag("Error ID", newID);
+          Sentry.captureException(err);
+        });
       });
   };
   return (
